@@ -1,0 +1,38 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install libfuse2
+      run: sudo apt-get update && sudo apt-get install libfuse2
+
+    - uses: actions/checkout@v3
+
+    - name: Download Owshen Wallet AppImage
+      run: |
+        wget https://github.com/OwshenNetwork/owshen/releases/download/v0.1.0/Owshen_v0.1.0_x86_64.AppImage
+        chmod +x Owshen_v0.1.0_x86_64.AppImage
+
+    - name: Initialize Owshen Wallet
+      run: ./Owshen_v0.1.0_x86_64.AppImage init
+
+    - name: Display Owshen Wallet Address
+      run: ./Owshen_v0.1.0_x86_64.AppImage info
+
+    - name: Build Rust project
+      run: cargo build --verbose
+
+    - name: Run Rust tests
+      run: cargo test --verbose
